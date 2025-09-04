@@ -19,9 +19,6 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-          
-      - name: Change directory
-        run: cd ui
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -29,9 +26,11 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
+        working-directory: ./ui
         run: npm i
 
       - name: Build with Vite
+        working-directory: ./ui
         run: npm run build
 
       - name: Build And Deploy
