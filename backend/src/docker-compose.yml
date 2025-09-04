@@ -1,0 +1,50 @@
+services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: >
+      azurite
+      --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0
+      --location /data --debug /data/debug.log
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - azurite-data:/data
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  # functionapp:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "7071:8080"
+  #   depends_on:
+  #     - azurite
+  #     - mailhog
+  #   environment:
+  #     AzureWebJobsStorage: "UseDevelopmentStorage=true"
+  #     FUNCTIONS_WORKER_RUNTIME: "dotnet-isolated"
+  #     ASPNETCORE_ENVIRONMENT: "Development"
+
+  #     AllowedOrigin: "http://localhost:5173"
+  #     PublicBaseUrl: "http://localhost:7071"
+
+  #     ContactTo: "${ContactTo}"
+  #     ContactFrom: "${ContactFrom}"
+  #     ContactFromName: "${ContactFromName}"
+  #     "MailHog:Host": "mailhog"
+  #     "MailHog:Port": "1025"
+
+  #     TurnstileSiteKey: "1x00000000000000000000AA"
+  #     TurnstileSecret: "1x0000000000000000000000000000000AA"
+
+  #     ConfirmTokenKey: "${ConfirmTokenKey}"
+
+volumes:
+  azurite-data:

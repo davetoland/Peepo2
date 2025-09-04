@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide scrollbar but maintain functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Minimal global styles for Vite React app without Tailwind */
+:root {
+  --brand-pink: #FF66C4;
+  --brand-navy: #05425C;
+  --brand-periwinkle: #94ACFF;
+  --brand-purple: #BD4AB5;
+  --blue: #3b82f6;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+header {
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+}
+.brand .logo { font-size: 28px; }
+
+nav { display: flex; gap: 20px; align-items: center; }
+
+.section { padding: 40px 0; }
+
+.grid { display: grid; gap: 20px; }
+
+.grid.cols-2 { grid-template-columns: 1fr 1fr; }
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+.card h3 { margin: 0 0 6px; font-size: 1.2rem; }
+
+.input, .textarea, select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font: inherit;
+}
+
+button { border: 0; padding: 12px 18px; border-radius: 999px; background: var(--pink); color: #fff; font-weight: 700; cursor: pointer; }
+
+.footer { background: #111; color: #ddd; padding: 16px; text-align: center; }
+
+@media (max-width: 768px) {
+  .grid.cols-2 { grid-template-columns: 1fr; }
+  nav { display: none; }
+}

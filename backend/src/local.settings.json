@@ -1,0 +1,27 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "ASPNETCORE_ENVIRONMENT": "Development",
+
+    "AllowedOrigins": "http://localhost:5173;http://localhost:5174;http://localhost:5175",
+    "PublicBaseUrl": "http://localhost:7071",
+
+    "ContactTo": "you@local.domain.com",
+    "ContactFrom": "noreply@local.domain.com",
+    "ContactFromName": "PEEPO TEST SITE",
+
+    "MailHog:Host": "localhost",
+    "MailHog:Port": "1025",
+
+    "TurnstileSiteKey": "1x00000000000000000000AA",
+    "TurnstileSecret": "1x0000000000000000000000000000000AA",
+    "TurnstileSecretName": "TurnstileSecret",
+
+    "ConfirmTokenKey": "J1N0ZWFtLXNpbXBsZS1yYW5kb20tMzJieXRlcy1iYXNlNjQ=",
+    "ConfirmKeySecretName": "ConfirmTokenKey",
+
+    "TablePurgeCutoffInMins": 60
+  }
+}
