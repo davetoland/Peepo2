@@ -14,14 +14,14 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     steps:
-      - name: Change directory
-        run: cd ui
-
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
           submodules: true
           fetch-depth: 0
+          
+      - name: Change directory
+        run: cd ui
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
