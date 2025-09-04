@@ -40,8 +40,9 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.DEPLOYMENT_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "./ui"
-          output_location: "build"
+          app_location: "/"
+          output_location: "dist"
+          data_api_location: ""
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
