@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to Functions",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}",
+      "preLaunchTask": "func: host start",
+      "postDebugTask": "compose:infra-down",
+      "justMyCode": true
+    }
+  ]
+}
+
+
+
+
+//I'm not a fan of having dev / prod switches in Program.cs, 
+// and I'm not a fan of having dev stuff in AppOptions (like MainHog). 
+// It's too easy to let dev stuff slip into prod, a better approach is 
+// to have a specific class (like LocalSecretReader for example, which 
+// supplies overriding values, and then guard this with #if DEBUG compiler 
+// switches for example. Then have the system setup and run as if it's prod,
+// and then have certain values overwritten. This way, if we're running in 
+// development/DEBUG then it's fine, but when we build for prod those overrides 
+// don't even get included. That way, no mistakes, because if something can go
+// wrong, it will. I've seen it happen too many times in production, and with 
+// live customers there's no repairing a huge fuck up like that in terms of reputation.

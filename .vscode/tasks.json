@@ -1,0 +1,166 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "compose:infra-up",
+      "type": "shell",
+      "command": "docker compose up -d azurite mailhog",
+      "options": {
+        "cwd": "${workspaceFolder}/backend/src"
+      }
+    },
+    {
+      "label": "restore",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "restore"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/backend/src"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "--no-restore",
+        "/nologo"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/backend/src"
+      },
+      "problemMatcher": "$msCompile",
+      "dependsOn": "restore"
+    },
+    {
+      "label": "func: host start",
+      "type": "shell",
+      "command": "func",
+      "args": [
+        "host",
+        "start",
+        "--port",
+        "7071"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/backend/src"
+      },
+      "isBackground": true,
+      "dependsOn": [
+        "compose:infra-up",
+        "build"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": "$func-watch"
+    },
+    {
+      "label": "OLD func: host start",
+      "type": "shell",
+      "command": "func",
+      "args": [
+        "host",
+        "start",
+        "--port",
+        "7071"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/backend/src"
+      },
+      "isBackground": true,
+      "dependsOn": [
+        "compose:infra-up",
+        "build"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": "$func-watch"
+    },
+    {
+      "label": "compose:infra-down",
+      "type": "shell",
+      "command": "docker compose stop azurite mailhog",
+      "options": {
+        "cwd": "${workspaceFolder}/backend/src"
+      }
+    },
+    {
+      "label": "clean (functions)",
+      "command": "dotnet",
+      "args": [
+        "clean",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "type": "process",
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/backend\\src"
+      }
+    },
+    {
+      "label": "build (functions)",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "type": "process",
+      "dependsOn": "clean (functions)",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/backend\\src"
+      }
+    },
+    {
+      "label": "clean release (functions)",
+      "command": "dotnet",
+      "args": [
+        "clean",
+        "--configuration",
+        "Release",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "type": "process",
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/backend\\src"
+      }
+    },
+    {
+      "label": "publish (functions)",
+      "command": "dotnet",
+      "args": [
+        "publish",
+        "--configuration",
+        "Release",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "type": "process",
+      "dependsOn": "clean release (functions)",
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/backend\\src"
+      }
+    },
+    {
+      "type": "func",
+      "dependsOn": "build (functions)",
+      "options": {
+        "cwd": "${workspaceFolder}/backend\\src/bin/Debug/net9.0"
+      },
+      "command": "host start",
+      "isBackground": true,
+      "problemMatcher": "$func-dotnet-watch"
+    }
+  ]
+}
