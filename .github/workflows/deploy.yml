@@ -1,0 +1,63 @@
+name: Deploy UI + Functions API to Azure Static Web App
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+jobs:
+  build_and_deploy:
+    # Deploy on pushes; for PRs, create/update a preview env
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install UI deps
+        working-directory: ./ui
+        run: npm ci
+
+      - name: Build UI (Vite)
+        working-directory: ./ui
+        run: npm run build
+
+      - name: Deploy to Azure Static Web Apps (UI + API)
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          # repo secret containing the SWA deployment token from
+          # Portal → your SWA → Overview → Manage deployment token
+          azure_static_web_apps_api_token: ${{ secrets.DEPLOYMENT_TOKEN }}
+
+          action: upload
+          production_branch: main
+
+          # UI
+          app_location: ./ui
+          output_location: dist
+
+          # Functions API (HTTP triggers only, managed by SWA)
+          api_location: ./backend
+
+          # Optional: silence data-api probing; safe to keep
+          data_api_location: ""
+
+  close_pr:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close SWA preview environment
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.DEPLOYMENT_TOKEN }}
+          action: close
