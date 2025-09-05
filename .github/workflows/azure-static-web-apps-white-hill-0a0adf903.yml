@@ -32,31 +32,11 @@ jobs:
       - name: Build with Vite
         working-directory: ./ui
         run: npm run build
-        
-      - name: Show what we built
-        run: ls -la ./ui/dist 
 
-      - name: Sanity-check token length
-        shell: bash
-        env:
-          TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Deploy with SWA CLI (verbose)
         run: |
-          echo "TOKEN_LEN=${#TOKEN}"
-          if [ -z "$TOKEN" ]; then
-            echo "Secret DEPLOYMENT_TOKEN is empty / not visible to this job"; exit 1
-          fi
-
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.DEPLOYMENT_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "./ui"
-          output_location: "dist"
-          production_branch: main
-          data_api_location: ""
+          npm i -g @azure/static-web-apps-cli
+          swa deploy ./ui/dist --env production --deployment-token "${{ secrets.DEPLOYMENT_TOKEN }}" --verbose
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
