@@ -32,6 +32,9 @@ jobs:
       - name: Build with Vite
         working-directory: ./ui
         run: npm run build
+        
+      - name: Show what we built
+        run: ls -la ./ui/dist 
 
       - name: Build And Deploy
         id: builddeploy
@@ -40,8 +43,9 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.DEPLOYMENT_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/"
+          app_location: "./ui"
           output_location: "dist"
+          production_branch: main
           data_api_location: ""
 
   close_pull_request_job:
