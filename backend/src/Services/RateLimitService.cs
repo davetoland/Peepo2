@@ -1,12 +1,10 @@
 using Azure.Data.Tables;
-using Azure.Storage.Queues;
 using PeepoBackend.Contracts;
 
 namespace PeepoBackend.Services;
 
-public sealed class RateLimitService(TableServiceClient tables, QueueClient queue) : IRateLimitService
+public sealed class RateLimitService(TableServiceClient tables) : IRateLimitService
 {
-
     public async Task<bool> AllowAsync(string key, string action, int limit, TimeSpan window)
     {
         var tableClient = tables.GetTableClient("RateLimit");
@@ -17,10 +15,6 @@ public sealed class RateLimitService(TableServiceClient tables, QueueClient queu
         string? filter = null;
         await foreach (var _ in tableClient.QueryAsync<TableEntity>(filter, maxPerPage: 1))
         {
-            // queue a cleanup message if it does
-            await queue.CreateIfNotExistsAsync();
-            await queue.SendMessageAsync("RateLimitCleanup");
-
             // Count recent
             int count = 0;
             await foreach (var __ in tableClient.QueryAsync<TableEntity>(filter: x => x.PartitionKey == key && x.Timestamp >= cutoff))

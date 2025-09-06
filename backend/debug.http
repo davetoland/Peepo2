@@ -22,3 +22,10 @@ Content-Type: application/json
   "email": "alice@example.com",
   "message": "hello! <b>bold</b> <script>alert(1)</script>"
 }
+
+
+### Cleanup
+POST http://localhost:7071/api/cleanup
+Content-Type: application/json
+
+{ }

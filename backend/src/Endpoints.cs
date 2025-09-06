@@ -3,8 +3,10 @@ using System.Text.Json;
 using Azure.Data.Tables;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Options;
 using PeepoBackend.Contracts;
+using PeepoBackend.Functions;
 using PeepoBackend.Models;
 using PeepoBackend.Utils;
 
@@ -23,8 +25,12 @@ public sealed class Endpoints(
     [Function("contact")]
     public async Task<HttpResponseData> Contact(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "contact")] HttpRequestData req,
+        [DurableClient] DurableTaskClient client,
         FunctionContext ctx)
     {
+        // Start cleanup orchestrator in the background
+        await client.ScheduleNewOrchestrationInstanceAsync(nameof(CleanupOrchestrator));
+        
         var appOptions = options.Value;
         var isValid = await RequestUtil.ValidateRequest(req, appOptions.Origins, turnstile);
         if (!isValid)
@@ -59,8 +65,12 @@ public sealed class Endpoints(
     [Function("subscribe")]
     public async Task<HttpResponseData> Subscribe(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "subscribe")] HttpRequestData req,
+        [DurableClient] DurableTaskClient client,
         FunctionContext ctx)
-    {
+    {        
+        // Start cleanup orchestrator in the background
+        await client.ScheduleNewOrchestrationInstanceAsync(nameof(CleanupOrchestrator));
+
         var appOptions = options.Value;
         var isValid = await RequestUtil.ValidateRequest(req, appOptions.Origins, turnstile);
         if (!isValid)
@@ -112,8 +122,12 @@ public sealed class Endpoints(
 
     [Function("confirm")]
     public async Task<HttpResponseData> Confirm(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "subscribe/confirm")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "subscribe/confirm")] HttpRequestData req,
+        [DurableClient] DurableTaskClient client)
     {
+        // Start cleanup orchestrator in the background
+        await client.ScheduleNewOrchestrationInstanceAsync(nameof(CleanupOrchestrator));
+
         var token = System.Web.HttpUtility.ParseQueryString(req.Url.Query).Get("token");
         if (string.IsNullOrEmpty(token))
             return await ResponseUtils.BadRequest(req, "missing token");
@@ -135,6 +149,7 @@ public sealed class Endpoints(
 
         var resp = req.CreateResponse(HttpStatusCode.Redirect);
         resp.Headers.Add("Location", "/subscribed"); // subscription confirmation page
+
         return resp;
     }
 }
